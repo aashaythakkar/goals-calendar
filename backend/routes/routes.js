@@ -5,7 +5,7 @@ const { createUser, getUserById } = require('../controllers/userController');
 const { createGoal, getAllGoals, getGoal, updateGoal, deleteGoal } = require('../controllers/goalController');
 const { createTask, getAllTasks, getTask, updateTask, deleteTask } = require('../controllers/taskController');
 const { createCategory, getAllCategories, getCategoryById, updateCategory, deleteCategory } = require('../controllers/categoryController');
-const { authenticate } = require('../middlewares/authMiddleware');
+const  authenticate = require('../middlewares/authMiddleware');
 
 // User Routes
 router.post('/users', createUser);

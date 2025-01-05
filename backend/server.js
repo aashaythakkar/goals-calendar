@@ -2,6 +2,7 @@ const express = require('express');
 const sequelize = require('./config/database');
 const routes = require('./routes/routes');
 const app = express();
+require('dotenv').config();
 
 app.use(express.json());
 

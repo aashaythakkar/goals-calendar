@@ -1,6 +1,6 @@
 const sequelize = require('../config/database'); // Adjust the path if necessary
 const { DataTypes } = require('sequelize');
-const { User } = require('./User');
+const { User } = require('./index');
 const { Task } = require('./index');
 const { Goal } = require('./index');
 
@@ -19,8 +19,8 @@ const Category = sequelize.define('Category', {
     },
   });
   
-Category.belongsTo(User, { foreignKey: 'user_id' });
-Category.hasMany(Task, { foreignKey: 'category_id' });
-Category.hasMany(Goal, { foreignKey: 'category_id' });
+// Category.belongsTo(User, { foreignKey: 'user_id' });
+// Category.hasMany(Task, { foreignKey: 'category_id' });
+// Category.hasMany(Goal, { foreignKey: 'category_id' });
 
-modules.exports = Category;
+module.exports = Category;

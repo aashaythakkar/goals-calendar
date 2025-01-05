@@ -23,8 +23,8 @@ const Goal = sequelize.define('Goal', {
     },
   });
   
-  Goal.belongsTo(User, { foreignKey: 'user_id' });
-  Goal.belongsTo(Category, { foreignKey: 'category_id' });
-  Goal.hasMany(Task, { foreignKey: 'goal_id' });
+//   Goal.belongsTo(User, { foreignKey: 'user_id' });
+//   Goal.belongsTo(Category, { foreignKey: 'category_id' });
+//   Goal.hasMany(Task, { foreignKey: 'goal_id' });
   
   module.exports = Goal;

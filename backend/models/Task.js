@@ -21,8 +21,8 @@ const Task = sequelize.define('Task', {
     },
   });
   
-Task.belongsTo(User, { foreignKey: 'user_id' });
-Task.belongsTo(Category, { foreignKey: 'category_id' });
-Task.belongsTo(Goal, { foreignKey: 'goal_id' });
+// Task.belongsTo(User, { foreignKey: 'user_id' });
+// Task.belongsTo(Category, { foreignKey: 'category_id' });
+// Task.belongsTo(Goal, { foreignKey: 'goal_id' });
 
 module.exports = Task;
