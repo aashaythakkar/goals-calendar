@@ -1,30 +1,39 @@
-const sequelize = require('../config/database'); // Adjust the path if necessary
+const sequelize = require('../config/database');
 const { DataTypes } = require('sequelize');
-
 
 const Goal = sequelize.define('Goal', {
     title: {
-      type: DataTypes.STRING,
-      allowNull: false,
+        type: DataTypes.STRING,
+        allowNull: false,
     },
-    startDate: {
-      type: DataTypes.DATE,
+    description: {
+        type: DataTypes.TEXT, // Optional field for more details
+        allowNull: true,
     },
-    endDate: {
-      type: DataTypes.DATE,
+    startdate: {
+        type: DataTypes.DATE,
+        allowNull: false,
     },
-    categoryId: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: 'Categories',
-        key: 'id',
-      },
-      allowNull: false,
+    enddate: {
+        type: DataTypes.DATE,
+        allowNull: false,
     },
-  });
-  
-//   Goal.belongsTo(User, { foreignKey: 'user_id' });
-//   Goal.belongsTo(Category, { foreignKey: 'category_id' });
-//   Goal.hasMany(Task, { foreignKey: 'goal_id' });
-  
-  module.exports = Goal;
+    category_id: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: 'Categories',
+            key: 'id',
+        },
+        allowNull: true, // Optional association with a category
+    },
+    user_id: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: 'Users',
+            key: 'id',
+        },
+        allowNull: false,
+    },
+});
+
+module.exports = Goal;

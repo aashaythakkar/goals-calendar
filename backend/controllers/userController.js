@@ -58,14 +58,27 @@ const login = async (req, res) => {
 
 const getUserById = async (req, res) => {
   try {
+    // Extract token from headers
+    console.log("here");
+    const token = req.header('Authorization')?.replace('Bearer ', '');
+    if (!token) return res.status(401).json({ message: 'No auth token found' });
+
+    console.log("here");
+    // Verify the token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log("here again");
+    // Fetch the user by ID
     const user = await User.findByPk(req.params.id);
-    if (user) {
-      res.status(200).json(user);
-    } else {
-      res.status(404).json({ message: "User not found" });
+    if (!user || user.id !== decoded.id) {
+      return res.status(404).json({ message: 'User not found' });
     }
+
+    res.status(200).json(user);
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    if (error.name === 'JsonWebTokenError') {
+      return res.status(401).json({ message: 'Invalid token' });
+    }
+    res.status(500).json({ message: 'Server error' });
   }
 };
 

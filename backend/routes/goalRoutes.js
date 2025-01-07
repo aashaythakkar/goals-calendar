@@ -1,87 +1,28 @@
 const express = require('express');
-const { Goal } = require('../models/Goal');
-
 const router = express.Router();
+const authMiddleware = require('../middleware/authMiddleware');
+const attachUserData = require('../middleware/attachUserData');
+const {
+  createGoal,
+  getAllGoals,
+  getGoalById,
+  updateGoal,
+  deleteGoal,
+} = require('../controllers/goalController');
 
-// GET all goals
-router.get('/', async (req, res) => {
-  try {
-    const goals = await Goal.findAll();
-    res.status(200).json(goals);
-  } catch (err) {
-    console.error('Error fetching goals:', err);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-});
+// Create a goal
+router.post('/goals', authMiddleware, attachUserData, createGoal);
 
-// GET a specific goal by ID
-router.get('/:id', async (req, res) => {
-  const { id } = req.params;
-  try {
-    const goal = await Goal.findByPk(id);
-    if (!goal) {
-      return res.status(404).json({ message: 'Goal not found' });
-    }
-    res.status(200).json(goal);
-  } catch (err) {
-    console.error('Error fetching goal:', err);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-});
+// Get all goals
+router.get('/goals', authMiddleware, attachUserData, getAllGoals);
 
-// POST route for creating a new goal (existing code)
-router.post('/', async (req, res) => {
-  try {
-    const { title, description, dueDate } = req.body;
-    const goal = await Goal.create({ title, description, dueDate });
-    res.status(201).json(goal);
-  } catch (err) {
-    console.error('Error creating goal:', err);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-});
+// Get a single goal by ID
+router.get('/goals/:id', authMiddleware, attachUserData, getGoalById);
 
-// PUT route for updating a goal
-router.put('/:id', async (req, res) => {
+// Update a goal by ID
+router.put('/goals/:id', authMiddleware, attachUserData, updateGoal);
 
-    const { id } = req.params;
-    const { title, description, dueDate } = req.body;
-  
-    try {
-      const goal = await Goal.findByPk(id);
-      if (!goal) {
-        return res.status(404).json({ message: 'Goal not found' });
-      }
-  
-      goal.title = title || goal.title;
-      goal.description = description || goal.description;
-      goal.dueDate = dueDate || goal.dueDate;
-  
-      await goal.save();
-      res.status(200).json(goal);
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ message: 'Internal server error' });
-    }
-  });
-  
-  // DELETE route for deleting a goal
-router.delete('/:id', async (req, res) => {
-    const { id } = req.params;
-  
-    try {
-      const goal = await Goal.findByPk(id);
-      if (!goal) {
-        return res.status(404).json({ message: 'Goal not found' });
-      }
-  
-      await goal.destroy();
-      res.status(200).json({ message: 'Goal deleted successfully' });
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ message: 'Internal server error' });
-    }
-  });
-  
+// Delete a goal by ID
+router.delete('/goals/:id', authMiddleware, attachUserData, deleteGoal);
 
 module.exports = router;

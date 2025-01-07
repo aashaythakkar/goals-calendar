@@ -1,67 +1,91 @@
-const { Category } = require('../models');
+const { Category, User } = require('../models');
 
-// Create a new category
+// 1. Create Category
 const createCategory = async (req, res) => {
   try {
-    const category = await Category.create(req.body);
+    const { name, description } = req.body;
+    const user_id = req.user.id; // From the decoded token
+
+    const category = await Category.create({ name, description, user_id });
     res.status(201).json(category);
   } catch (error) {
-    res.status(500).json({ message: 'Failed to create category', error });
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
-// Get all categories
+// 2. Get All Categories
 const getAllCategories = async (req, res) => {
   try {
-    const categories = await Category.findAll();
+    const categories = await Category.findAll({
+      where: { user_id: req.user.id }, // Filter by logged-in user
+    });
     res.status(200).json(categories);
   } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch categories', error });
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
-// Get category by ID
+// 3. Get Single Category by ID
 const getCategoryById = async (req, res) => {
   try {
-    const category = await Category.findByPk(req.params.id);
+    const category = await Category.findOne({
+      where: { id: req.params.id, user_id: req.user.id },
+    });
     if (category) {
       res.status(200).json(category);
     } else {
       res.status(404).json({ message: 'Category not found' });
     }
   } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch category', error });
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
-// Update category
+// 4. Update Category
 const updateCategory = async (req, res) => {
   try {
-    const category = await Category.findByPk(req.params.id);
-    if (category) {
-      await category.update(req.body);
-      res.status(200).json(category);
-    } else {
-      res.status(404).json({ message: 'Category not found' });
-    }
+    const { name, description } = req.body;
+    const category = await Category.findOne({
+      where: { id: req.params.id, user_id: req.user.id },
+    });
+
+    if (!category) return res.status(404).json({ message: 'Category not found' });
+
+    category.name = name || category.name;
+    category.description = description || category.description;
+
+    await category.save();
+    res.status(200).json(category);
   } catch (error) {
-    res.status(500).json({ message: 'Failed to update category', error });
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
-// Delete category
+// 5. Delete Category
 const deleteCategory = async (req, res) => {
   try {
-    const category = await Category.findByPk(req.params.id);
-    if (category) {
-      await category.destroy();
-      res.status(200).json({ message: 'Category deleted' });
-    } else {
-      res.status(404).json({ message: 'Category not found' });
-    }
+    const category = await Category.findOne({
+      where: { id: req.params.id, user_id: req.user.id },
+    });
+
+    if (!category) return res.status(404).json({ message: 'Category not found' });
+
+    await category.destroy();
+    res.status(204).json({ message: 'Category deleted successfully' });
   } catch (error) {
-    res.status(500).json({ message: 'Failed to delete category', error });
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
-module.exports = { createCategory, getAllCategories, getCategoryById, updateCategory, deleteCategory };
+module.exports = {
+  createCategory,
+  getAllCategories,
+  getCategoryById,
+  updateCategory,
+  deleteCategory,
+};

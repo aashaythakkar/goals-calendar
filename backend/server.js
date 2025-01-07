@@ -2,13 +2,14 @@ const express = require('express');
 const sequelize = require('./config/database');
 const routes = require('./routes/routes');
 const app = express();
+const authRoutes = require('./routes/authRoutes');
 require('dotenv').config();
 
 app.use(express.json());
 
 // Mount routes
 app.use('/api', routes); // Mount the auth routes
-
+app.use('/auth', authRoutes);
 // Global error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);

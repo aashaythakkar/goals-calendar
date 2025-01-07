@@ -1,86 +1,91 @@
-const { Goal, Task, Category, User } = require('../models');
-const jwt = require('jsonwebtoken');
+const { Goal, Category, Task, User } = require('../models');
 
-// Middleware to verify JWT and extract user info
-const authenticateUser = (req, res, next) => {
-  const token = req.header('Authorization')?.replace('Bearer ', '');
-  if (!token) return res.status(401).json({ message: 'No token provided' });
-
+// 1. Create Goal
+const createGoal = async (req, res) => {
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // Attach user info to request
-    next();
+    const { title, startdate, enddate, category_id } = req.body;
+    const user_id = req.user.id; // From the decoded token
+
+    const goal = await Goal.create({ title, startdate, enddate, category_id, user_id });
+    res.status(201).json(goal);
   } catch (error) {
-    return res.status(401).json({ message: 'Invalid token' });
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
-// Apply the authenticateUser middleware to goal-related routes
-exports.createGoal = [authenticateUser, async (req, res) => {
-  try {
-    const { title, description, start_date, end_date, categoryId } = req.body;
-    const goal = await Goal.create({
-      title,
-      description,
-      start_date,
-      end_date,
-      categoryId,
-      userId: req.user.id
-    });
-    res.status(201).json(goal);
-  } catch (error) {
-    res.status(500).json({ message: 'Error creating goal', error });
-  }
-}];
-
-exports.getAllGoals = [authenticateUser, async (req, res) => {
+// 2. Get All Goals
+const getAllGoals = async (req, res) => {
   try {
     const goals = await Goal.findAll({
-      where: { userId: req.user.id },
-      include: [{ model: Category }, { model: Task }]
+      where: { user_id: req.user.id }, // Filter by logged-in user
+      include: [Category], // Include related Category data
     });
     res.status(200).json(goals);
   } catch (error) {
-    res.status(500).json({ message: 'Error retrieving goals', error });
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
   }
-}];
+};
 
-exports.getGoal = [authenticateUser, async (req, res) => {
+// 3. Get Goal by ID
+const getGoalById = async (req, res) => {
   try {
     const goal = await Goal.findOne({
-      where: { id: req.params.id, userId: req.user.id },
-      include: [{ model: Category }, { model: Task }]
+      where: { id: req.params.id, user_id: req.user.id },
+      include: [Category],
     });
+    if (goal) {
+      res.status(200).json(goal);
+    } else {
+      res.status(404).json({ message: 'Goal not found' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// 4. Update Goal
+const updateGoal = async (req, res) => {
+  try {
+    const { title, startdate, enddate, category_id } = req.body;
+    const goal = await Goal.findOne({ where: { id: req.params.id, user_id: req.user.id } });
+
     if (!goal) return res.status(404).json({ message: 'Goal not found' });
+
+    goal.title = title || goal.title;
+    goal.startDate = startdate || goal.startdate;
+    goal.endDate = enddate || goal.enddate;
+    goal.category_id = category_id || goal.category_id;
+
+    await goal.save();
     res.status(200).json(goal);
   } catch (error) {
-    res.status(500).json({ message: 'Error retrieving goal', error });
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
   }
-}];
+};
 
-exports.updateGoal = [authenticateUser, async (req, res) => {
+// 5. Delete Goal
+const deleteGoal = async (req, res) => {
   try {
-    const { title, description, start_date, end_date, categoryId } = req.body;
-    const goal = await Goal.findOne({ where: { id: req.params.id, userId: req.user.id } });
-
-    if (!goal) return res.status(404).json({ message: 'Goal not found' });
-
-    await goal.update({ title, description, start_date, end_date, categoryId });
-    res.status(200).json(goal);
-  } catch (error) {
-    res.status(500).json({ message: 'Error updating goal', error });
-  }
-}];
-
-exports.deleteGoal = [authenticateUser, async (req, res) => {
-  try {
-    const goal = await Goal.findOne({ where: { id: req.params.id, userId: req.user.id } });
+    const goal = await Goal.findOne({ where: { id: req.params.id, user_id: req.user.id } });
 
     if (!goal) return res.status(404).json({ message: 'Goal not found' });
 
     await goal.destroy();
-    res.status(200).json({ message: 'Goal deleted successfully' });
+    res.status(204).json({ message: 'Goal deleted successfully' });
   } catch (error) {
-    res.status(500).json({ message: 'Error deleting goal', error });
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
   }
-}];
+};
+
+module.exports = {
+  createGoal,
+  getAllGoals,
+  getGoalById,
+  updateGoal,
+  deleteGoal,
+};

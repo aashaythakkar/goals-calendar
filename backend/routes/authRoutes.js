@@ -1,14 +1,15 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
-const { User } = require('../models/User');
+const { User } = require('../models');
 const jwt = require('jsonwebtoken');
+require("dotenv").config();
 
 
 const router = express.Router();
 
 // Registration route
 router.post('/register', async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, username, email, password } = req.body;
   
   try {
     // Check if user already exists
@@ -19,11 +20,12 @@ router.post('/register', async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     
     // Create the user
-    const newUser = await User.create({ name, email, password: hashedPassword });
-    
+    const newUser = await User.create({ name, username, email, password: hashedPassword });
+
     // Create JWT token
-    const token = jwt.sign({ id: newUser.id }, 'secretkey', { expiresIn: '1h' });
-    
+    // Create JWT token
+    const token = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
     res.status(201).json({ token });
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
@@ -33,7 +35,7 @@ router.post('/register', async (req, res) => {
 // Login route
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
-  
+  console.log("here")
   try {
     // Check if user exists
     const user = await User.findOne({ where: { email } });
@@ -44,7 +46,7 @@ router.post('/login', async (req, res) => {
     if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
     
     // Create JWT token
-    const token = jwt.sign({ id: user.id }, 'secretkey', { expiresIn: '1h' });
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
     
     res.status(200).json({ token });
   } catch (err) {

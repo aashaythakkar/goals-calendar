@@ -1,10 +1,18 @@
-const jwt = require('express-jwt');
-const { User } = require('../models');
+const { expressjwt: jwt } = require('express-jwt');
+require("dotenv").config();
 
-// Middleware to protect routes
 const authMiddleware = jwt({
   secret: process.env.JWT_SECRET,
   algorithms: ['HS256'],
+}).unless({
+  path: ['/login', '/register'], // Exclude these routes
 });
 
-module.exports = authMiddleware;
+const attachUserData = (req, res, next) => {
+  if (req.auth) { // Ensure the JWT middleware attaches `auth`
+    req.user = req.auth; // Attach decoded token to req.user
+  }
+  next();
+};
+
+module.exports = { authMiddleware, attachUserData };

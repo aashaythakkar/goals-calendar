@@ -2,34 +2,36 @@ const express = require('express');
 const router = express.Router();
 
 const { createUser, getUserById } = require('../controllers/userController');
-const { createGoal, getAllGoals, getGoal, updateGoal, deleteGoal } = require('../controllers/goalController');
-const { createTask, getAllTasks, getTask, updateTask, deleteTask } = require('../controllers/taskController');
+const { createGoal, getAllGoals, getGoalById, updateGoal, deleteGoal } = require('../controllers/goalController');
+const { createTask, getAllTasks, getTaskById, updateTask, deleteTask, toggleTaskStatus } = require('../controllers/taskController');
 const { createCategory, getAllCategories, getCategoryById, updateCategory, deleteCategory } = require('../controllers/categoryController');
-const  authenticate = require('../middlewares/authMiddleware');
+const { authMiddleware, attachUserData} = require('../middleware/authMiddleware');
+
 
 // User Routes
 router.post('/users', createUser);
-router.get('/users/:id', authenticate, getUserById);
+router.get('/users/:id', authMiddleware, getUserById);
 
 // Goal Routes
-router.post('/goals', authenticate, createGoal);
-router.get('/goals', authenticate, getAllGoals);
-router.get('/goals/:id', authenticate, getGoal);
-router.put('/goals/:id', authenticate, updateGoal);
-router.delete('/goals/:id', authenticate, deleteGoal);
+router.post('/goals', authMiddleware, attachUserData, createGoal);
+router.get('/goals', authMiddleware, attachUserData, getAllGoals);
+router.get('/goals/:id', authMiddleware, attachUserData, getGoalById);
+router.put('/goals/:id', authMiddleware, attachUserData, updateGoal);
+router.delete('/goals/:id', authMiddleware, attachUserData, deleteGoal);
 
 // Task Routes
-router.post('/tasks', authenticate, createTask);
-router.get('/tasks', authenticate, getAllTasks);
-router.get('/tasks/:id', authenticate, getTask);
-router.put('/tasks/:id', authenticate, updateTask);
-router.delete('/tasks/:id', authenticate, deleteTask);
+router.post('/tasks', authMiddleware,attachUserData, createTask);  // Create a task
+router.get('/tasks', authMiddleware, attachUserData, getAllTasks);  // Get all tasks
+router.get('/tasks/:id', authMiddleware, attachUserData, getTaskById);  // Get task by ID
+router.put('/tasks/:id', authMiddleware, attachUserData, updateTask);  // Update task by ID
+router.delete('/tasks/:id', authMiddleware, attachUserData, deleteTask);  // Delete task by ID
+router.patch('/tasks/:id/status', authMiddleware, attachUserData, toggleTaskStatus);  // Toggle task status
 
 // Category Routes
-router.post('/categories', authenticate, createCategory);
-router.get('/categories', authenticate, getAllCategories);
-router.get('/categories/:id', authenticate, getCategoryById);
-router.put('/categories/:id', authenticate, updateCategory);
-router.delete('/categories/:id', authenticate, deleteCategory);
+router.post('/categories/', authMiddleware, attachUserData, createCategory);
+router.get('/categories/', authMiddleware, attachUserData, getAllCategories);
+router.get('/categories/:id', authMiddleware, attachUserData, getCategoryById);
+router.put('/categories/:id', authMiddleware, attachUserData, updateCategory);
+router.delete('/categories/:id', authMiddleware, attachUserData, deleteCategory);
 
 module.exports = router;
