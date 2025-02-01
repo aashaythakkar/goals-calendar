@@ -20,6 +20,9 @@ Goal.belongsTo(Category, { foreignKey: 'category_id' });
 Goal.hasMany(Task, { foreignKey: 'goal_id' });
 Task.belongsTo(Goal, { foreignKey: 'goal_id' });
 
+Task.belongsTo(Category, { foreignKey: 'category_id' });
+Category.hasMany(Task, { foreignKey: 'category_id' });
+
 
 module.exports = { User, Category, Task, Goal, sequelize };
 

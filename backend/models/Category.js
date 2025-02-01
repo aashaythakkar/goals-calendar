@@ -20,6 +20,11 @@ const Category = sequelize.define('Category', {
     },
     allowNull: false,
   },
+  categoryColor: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true, 
+  },
 });
 
 Category.belongsTo(User, { foreignKey: 'user_id' });

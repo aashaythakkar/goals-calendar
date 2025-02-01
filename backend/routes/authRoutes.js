@@ -35,10 +35,12 @@ router.post('/register', async (req, res) => {
 // Login route
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
-  console.log("here")
+  console.log("In login route")
+  console.log(email + " " + password);
   try {
     // Check if user exists
     const user = await User.findOne({ where: { email } });
+    console.log(user);
     if (!user) return res.status(400).json({ message: 'Invalid credentials' });
     
     // Compare passwords
@@ -47,7 +49,6 @@ router.post('/login', async (req, res) => {
     
     // Create JWT token
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    
     res.status(200).json({ token });
   } catch (err) {
     res.status(500).json({ message: 'Server error' });

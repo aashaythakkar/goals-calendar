@@ -4,8 +4,10 @@ const routes = require('./routes/routes');
 const app = express();
 const authRoutes = require('./routes/authRoutes');
 require('dotenv').config();
+const cors = require('cors');
 
 app.use(express.json());
+app.use(cors());
 
 // Mount routes
 app.use('/api', routes); // Mount the auth routes

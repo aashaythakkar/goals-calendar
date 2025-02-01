@@ -22,10 +22,12 @@ const getAllTasks = async (req, res) => {
       include: [Category, Goal], // Include related Category and Goal data
     });
     res.status(200).json(tasks);
+    console.log(tasks);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
   }
+
 };
 
 // 3. Get Single Task by ID

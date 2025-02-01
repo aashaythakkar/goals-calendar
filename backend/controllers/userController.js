@@ -40,9 +40,11 @@ const login = async (req, res) => {
     // Find user by username
     const user = await User.findOne({ where: { username } });
     if (!user) return res.status(404).json({ message: 'User not found' });
-
+    console.log("Password is : " + password);
     // Compare provided password with stored hashed password
     const isMatch = await bcrypt.compare(password, user.password);
+    // console.log(isMatch);
+    // console.log("here");
     if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
 
     // Generate JWT token
@@ -59,14 +61,14 @@ const login = async (req, res) => {
 const getUserById = async (req, res) => {
   try {
     // Extract token from headers
-    console.log("here");
+    // console.log("here");
     const token = req.header('Authorization')?.replace('Bearer ', '');
     if (!token) return res.status(401).json({ message: 'No auth token found' });
 
-    console.log("here");
+    // console.log("here");
     // Verify the token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("here again");
+    // console.log("here again");
     // Fetch the user by ID
     const user = await User.findByPk(req.params.id);
     if (!user || user.id !== decoded.id) {
