@@ -3,10 +3,10 @@ const { Category, User } = require('../models');
 // 1. Create Category
 const createCategory = async (req, res) => {
   try {
-    const { name, description } = req.body;
+    const { name, description, categoryColor } = req.body;
     const user_id = req.user.id; // From the decoded token
 
-    const category = await Category.create({ name, description, user_id });
+    const category = await Category.create({ name, description, user_id, categoryColor });
     res.status(201).json(category);
   } catch (error) {
     console.error(error);

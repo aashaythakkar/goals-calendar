@@ -21,3 +21,6 @@ Thumbs.db
 
 # VS Code settings
 .vscode/
+
+# Webstorm settings
+.idea/

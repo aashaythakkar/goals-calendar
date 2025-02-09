@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { login } from "../api";
 import { useNavigate } from "react-router-dom";
-import logo from "../public/images/logo.png"; // Adjust the path to your logo file
+import logo from "../public/images/logo4.png"; // Adjust the path to your logo file
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -21,10 +21,10 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col items-center justify-center bg-gray-200">
-      <img src={logo} alt="App Logo" className="w-64 h-auto mb-6" />
-      <div className="bg-white p-8 rounded-lg shadow-lg w-96">
-        <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
+      <div className="h-screen flex flex-col items-center justify-center bg-gradient-to-br from-yellow-400 to-red-500">
+        <img src={logo} alt="App Logo" className="w-128 h-auto mb-6 filter brightness-110 contrast-125"/>
+        <div className="bg-white dark:bg-gray-900 p-8 rounded-lg shadow-xl w-96">
+          <h2 className="text-2xl font-bold mb-4 text-center text-gray-800 dark:text-white">Login</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <input
