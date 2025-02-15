@@ -16,6 +16,16 @@ export const login = async (credentials) => {
   }
 };
 
+export const createUser = async (credentials) => {
+  try {
+    const response = await axios.post(`${API_URL}/api/users`, credentials);
+    return response.data;
+  } catch (error) {
+    console.error("Error creating user:", error);
+    throw error;
+  }
+};
+
 export const getGoals = async () => {
   try {
     const response = await axios.get(`${API_URL}/api/goals`, getAuthHeaders());

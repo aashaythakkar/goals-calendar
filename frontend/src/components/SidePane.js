@@ -1,10 +1,10 @@
 import React from "react";
-import logo from "../public/images/logo.png";
+import logo from "../public/images/logo4.png";
 
 function SidePane() {
   return (
-    <div className="w-64 bg-gray-800 text-white p-4">
-      <img src={logo} alt="App Logo" className="w-48 h-auto mb-6" />
+    <div className="w-64 bg-gradient-to-r from-orange-500 to-orange-400 text-white p-4">
+      <img src={logo} alt="App Logo" className="w-auto h-auto mb-6" />
       <h2 className="text-lg font-bold mb-4">Options</h2>
       <ul>
         <li className="mb-2">

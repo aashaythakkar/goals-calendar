@@ -38,8 +38,20 @@ const BigCalendar = ({ goals, tasks }) => {
 
   useEffect(() => {
     const formattedEvents = [
-      ...goals.map(goal => ({ ...goal, start: new Date(goal.startdate), end: new Date(goal.enddate), categoryColor: goal.Category?.categoryColor, isTask: false })),
-      ...tasks.map(task => ({ ...task, start: new Date(task.date), end: new Date(task.date), categoryColor: task.Category?.categoryColor, isTask: true })),
+      ...goals.map(goal => ({
+        ...goal,
+        start: new Date(goal.startdate),
+        end: new Date(goal.enddate),
+        categoryColor: goal.Category?.categoryColor,
+        isTask: false,
+      })),
+      ...tasks.map(task => ({
+        ...task,
+        start: new Date(task.date),
+        end: new Date(task.date),
+        categoryColor: task.Category?.categoryColor,
+        isTask: true,
+      })),
     ];
     setEvents(formattedEvents);
   }, [goals, tasks]);
@@ -77,21 +89,22 @@ const BigCalendar = ({ goals, tasks }) => {
   };
 
   const eventStyleGetter = (event) => {
-    let backgroundColor = event.categoryColor || "#ff0";
-    let borderColor = event.isTask ? "blue" : "green";
+    let backgroundColor = event.categoryColor || "#ff9800";  // Soft orange
+    let borderColor = event.isTask ? "#1e40af" : "#2f855a"; // Blue for tasks, green for goals
     return {
       style: {
         backgroundColor,
         borderColor,
         borderStyle: "solid",
         color: "#fff",
+        borderWidth: "2px",
       },
     };
   };
 
   return (
-    <div className="flex h-screen">
-      <div className="w-3/4 p-4">
+    <div className="flex h-screen h-full bg-gray-100">
+      <div className="w-full p-4">
         <Calendar
           localizer={localizer}
           events={events}
@@ -106,7 +119,7 @@ const BigCalendar = ({ goals, tasks }) => {
 
       <div className="fixed bottom-4 right-4">
         <button
-          className="bg-blue-500 text-white px-4 py-2 rounded"
+          className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded shadow-md"
           onClick={() => setShowCategoryModal(true)}
         >
           Create Category
@@ -115,36 +128,34 @@ const BigCalendar = ({ goals, tasks }) => {
 
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1000]">
-          <div className="bg-white p-6 rounded shadow-lg">
-            <h2 className="text-xl font-bold mb-2">Create {isTask ? "Task" : "Goal"}</h2>
+          <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
+            <h2 className="text-2xl font-semibold mb-4 text-center">Create {isTask ? "Task" : "Goal"}</h2>
             <input
               type="text"
-              className="border p-2 w-full"
+              className="border border-gray-300 p-2 w-full rounded-md mb-4"
               placeholder="Enter title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
-            <div className="mt-2">
-              <label className="mr-2">Type:</label>
+            <div className="flex justify-center mb-4">
               <button
-                className={`px-3 py-1 rounded ${isTask ? "bg-blue-500 text-white" : "bg-gray-300"}`}
+                className={`px-4 py-2 mx-2 rounded ${isTask ? "bg-blue-500 text-white" : "bg-gray-300 text-black"}`}
                 onClick={() => setIsTask(true)}
               >
                 Task
               </button>
               <button
-                className={`ml-2 px-3 py-1 rounded ${!isTask ? "bg-green-500 text-white" : "bg-gray-300"}`}
+                className={`px-4 py-2 mx-2 rounded ${!isTask ? "bg-green-500 text-white" : "bg-gray-300 text-black"}`}
                 onClick={() => setIsTask(false)}
               >
                 Goal
               </button>
             </div>
 
-            {/* Category Dropdown */}
-            <div className="mt-2">
-              <label className="mr-2">Category:</label>
+            <div className="mb-4">
+              <label className="block mb-2">Category:</label>
               <select
-                className="border p-2 w-full"
+                className="border border-gray-300 p-2 w-full rounded-md"
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
               >
@@ -158,10 +169,10 @@ const BigCalendar = ({ goals, tasks }) => {
             </div>
 
             {isTask && (
-              <div className="mt-2">
+              <div className="mb-4">
                 <label>Assign to Goal (optional):</label>
                 <select
-                  className="border p-2 w-full"
+                  className="border border-gray-300 p-2 w-full rounded-md"
                   value={selectedGoal || ""}
                   onChange={(e) => setSelectedGoal(e.target.value)}
                 >
@@ -175,15 +186,15 @@ const BigCalendar = ({ goals, tasks }) => {
               </div>
             )}
 
-            <div className="mt-4 flex justify-end">
+            <div className="flex justify-end mt-4">
               <button
-                className="px-4 py-2 bg-green-500 text-white rounded mr-2"
+                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md mr-2"
                 onClick={handleSubmit}
               >
                 Save
               </button>
               <button
-                className="px-4 py-2 bg-gray-500 text-white rounded"
+                className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md"
                 onClick={() => setShowModal(false)}
               >
                 Cancel
@@ -195,37 +206,37 @@ const BigCalendar = ({ goals, tasks }) => {
 
       {showCategoryModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1000]">
-          <div className="bg-white p-6 rounded shadow-lg">
-            <h2 className="text-xl font-bold mb-2">Create Category</h2>
+          <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
+            <h2 className="text-2xl font-semibold mb-4 text-center">Create Category</h2>
             <input
               type="text"
-              className="border p-2 w-full"
+              className="border border-gray-300 p-2 w-full rounded-md mb-4"
               placeholder="Category name"
               value={newCategory.name}
               onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
             />
             <input
               type="text"
-              className="border p-2 w-full mt-2"
+              className="border border-gray-300 p-2 w-full mb-4"
               placeholder="Category description"
               value={newCategory.description}
               onChange={(e) => setNewCategory({ ...newCategory, description: e.target.value })}
             />
             <input
               type="color"
-              className="mt-2"
+              className="mb-4"
               value={newCategory.categoryColor}
               onChange={(e) => setNewCategory({ ...newCategory, categoryColor: e.target.value })}
             />
-            <div className="mt-4 flex justify-end">
+            <div className="flex justify-end mt-4">
               <button
-                className="px-4 py-2 bg-green-500 text-white rounded mr-2"
+                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md mr-2"
                 onClick={handleCategorySubmit}
               >
                 Save Category
               </button>
               <button
-                className="px-4 py-2 bg-gray-500 text-white rounded"
+                className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md"
                 onClick={() => setShowCategoryModal(false)}
               >
                 Cancel
