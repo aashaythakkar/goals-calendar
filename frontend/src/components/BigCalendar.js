@@ -38,23 +38,24 @@ const BigCalendar = ({ goals, tasks }) => {
 
   useEffect(() => {
     const formattedEvents = [
-      ...goals.map(goal => ({
-        ...goal,
-        start: new Date(goal.startdate),
-        end: new Date(goal.enddate),
-        categoryColor: goal.Category?.categoryColor,
-        isTask: false,
-      })),
+      // ...goals.map(goal => ({
+      //   ...goal,
+      //   start: new Date(goal.startdate),
+      //   end: new Date(goal.enddate),
+      //   categoryColor: goal.Category?.categoryColor,
+      //   isTask: false,
+      // })),
       ...tasks.map(task => ({
         ...task,
         start: new Date(task.date),
         end: new Date(task.date),
         categoryColor: task.Category?.categoryColor,
+        title: task.Goal?.id ? `${task.Goal?.title} - ${task.title}` : task.title,
         isTask: true,
       })),
     ];
     setEvents(formattedEvents);
-  }, [goals, tasks]);
+  }, [tasks]);
 
   const handleAddEvent = (slotInfo) => {
     setSelectedDate(slotInfo.start);
