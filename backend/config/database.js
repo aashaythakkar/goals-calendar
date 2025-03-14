@@ -1,6 +1,7 @@
 const { Sequelize } = require('sequelize');
+require("dotenv").config();
 
-const sequelize = new Sequelize('postgres://postgres:postgres@localhost/goal_tracker');
+const sequelize = new Sequelize(process.env.DATABASE_URL);
 
 
 // const sequelize = new Sequelize({
